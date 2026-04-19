@@ -9,7 +9,27 @@
 
     <style>
         /* Base & Typography */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0205; overflow: hidden; text-align: center; margin: 0; padding: 0; color: white; transition: background-image 1.5s ease-in-out; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 0; color: white; overflow: hidden; text-align: center;
+            /* Applying background photo from the start with slow fade */
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            /* Making the background softer and pinker from the start */
+            background-color: #fff0f3;
+            transition: background-image 1.5s ease-in-out;
+        }
+
+        /* Continuous Pink Frosted Blur over everything */
+        #permanent-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(255, 182, 193, 0.65); /* More pink, more opaque for a stronger effect */
+            backdrop-filter: blur(8px); /* Same blur always */
+            z-index: -1;
+        }
+
         .timeline-content::first-letter, .secret-love-letter p::first-letter { text-transform: uppercase; }
 
         /* UI Controls */
@@ -21,36 +41,36 @@
         #eye-toggle { position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 20px; color: white; cursor: pointer; display: none; backdrop-filter: blur(5px); border: 1px solid rgba(255,179,198,0.3); transition: background 0.3s; }
         #eye-toggle:active { background: rgba(255, 77, 109, 0.5); }
 
-        /* Countdown Screen */
-        #countdown-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; background: linear-gradient(135deg, #2b0009 0%, #0d0205 100%); color: #fdf2f8; position: absolute; z-index: 1000; }
-        #countdown-screen h1 { font-size: 3.5em; margin-bottom: 10px; user-select: none; cursor: pointer; color: #ffb3c6; text-shadow: 0 0 20px rgba(255, 179, 198, 0.5); transition: opacity 0.1s; }
-        #countdown-screen p { font-size: 1.2em; font-weight: 500; color: #ffccd5; margin-bottom: 30px; }
+        /* Countdown Screen - Updated for pinker theme */
+        #countdown-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: absolute; z-index: 1000; background: rgba(13, 2, 5, 0.3); }
+        #countdown-screen h1 { font-size: 3.5em; margin-bottom: 10px; user-select: none; cursor: pointer; color: #fff0f3; text-shadow: 0 0 20px #ff4d6d; transition: opacity 0.1s; }
+        #countdown-screen p { font-size: 1.2em; font-weight: 500; color: #ffccd5; margin-bottom: 30px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
         #timer { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px; }
-        .time-unit { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 179, 198, 0.2); border-radius: 15px; padding: 15px; min-width: 65px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; }
+        .time-unit { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 179, 198, 0.3); border-radius: 15px; padding: 15px; min-width: 65px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; }
         .time-unit .num { font-size: 2.2em; font-weight: 800; color: #fff; text-shadow: 0 0 15px #ff4d6d; line-height: 1; }
-        .time-unit .label { font-size: 0.65em; text-transform: uppercase; letter-spacing: 1px; color: #ffb3c6; margin-top: 8px; }
+        .time-unit .label { font-size: 0.65em; text-transform: uppercase; letter-spacing: 1px; color: #fff0f3; margin-top: 8px; font-weight: bold; }
         .colon { font-size: 2em; font-weight: bold; color: #ff4d6d; animation: pulseColon 1s infinite alternate; padding-bottom: 15px; }
-        @keyframes pulseColon { 0% { opacity: 0.3; text-shadow: 0 0 0px #ff4d6d; } 100% { opacity: 1; text-shadow: 0 0 15px #ff4d6d; } }
+        @keyframes pulseColon { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
         /* Heart Question View */
-        #question-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(13, 2, 5, 0.6); backdrop-filter: blur(8px); z-index: 60; justify-content: center; align-items: center; overflow: hidden; }
+        #question-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.2); z-index: 60; justify-content: center; align-items: center; overflow: hidden; }
         #question-content { z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
-        #question-view h2 { font-size: 2.2em; text-shadow: 0 0 15px rgba(255, 77, 109, 0.8); margin-bottom: 10px; color: #fff0f3; text-align: center; }
-        #question-view p { font-size: 1.1em; color: #ffccd5; font-style: italic; margin-top: 0;}
+        #question-view h2 { font-size: 2.5em; text-shadow: 0 0 20px #ff4d6d, 0 0 10px #000; margin-bottom: 10px; color: #fff; text-align: center; }
+        #question-view p { font-size: 1.2em; color: #ffccd5; font-style: italic; margin-top: 0; text-shadow: 0 0 5px #000;}
         #yes-btn-scatter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
         /* Photo Heart CSS */
         .heart-photo { 
-            position: absolute; width: 70px; height: 70px; object-fit: cover; border-radius: 50%; 
-            border: 2px solid #ffb3c6; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); opacity: 0; cursor: pointer; 
+            position: absolute; width: 75px; height: 75px; object-fit: cover; border-radius: 50%; 
+            border: 3px solid #ffb3c6; box-shadow: 0 4px 15px rgba(214, 51, 108, 0.8); opacity: 0; cursor: pointer; 
             transform: translate(-50%, -50%) scale(0);
             animation: popInHeart 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, heartbeat 1.5s infinite alternate ease-in-out 0.6s; 
         }
         @keyframes popInHeart { to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
         @keyframes heartbeat { 
-            from { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 10px rgba(214, 51, 108, 0.5); border-color: #ffb3c6; } 
-            to { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 25px rgba(214, 51, 108, 0.9); border-color: #fff; } 
+            from { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(214, 51, 108, 0.6); border-color: #ffb3c6; } 
+            to { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 30px #fff; border-color: #fff; } 
         }
 
         /* Explosion Shatter */
@@ -65,7 +85,7 @@
         #envelope-wrapper { position: relative; width: 320px; height: 220px; perspective: 1000px; transform: translateY(-50px); opacity: 0; animation: dropIn 1s ease forwards; }
         @keyframes dropIn { to { transform: translateY(0); opacity: 1; } }
 
-        .env-back { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #900d2f; border-radius: 8px; z-index: 1; }
+        .env-back { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #900d2f; border-radius: 8px; z-index: 1; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         .env-front { position: absolute; bottom: 0; left: 0; width: 0; height: 0; border-left: 160px solid #c9184a; border-right: 160px solid #c9184a; border-bottom: 120px solid #b71340; border-top: 100px solid transparent; z-index: 3; border-radius: 0 0 8px 8px; }
         .env-flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 120px solid #ff4d6d; transform-origin: top; transition: transform 0.8s ease-in-out; z-index: 4; }
         .env-letter { position: absolute; top: 10px; left: 10px; width: 300px; height: 200px; background: #fff0f3; border-radius: 8px; z-index: 2; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: transform 1.2s ease-in-out 0.8s, background 1s 2s; }
@@ -73,7 +93,7 @@
 
         #envelope-wrapper.open .env-flap { transform: rotateX(180deg); z-index: 1; }
         #envelope-wrapper.open .env-letter { transform: translateY(-30vh) scale(1.6); z-index: 10; background: transparent; overflow: visible; }
-        #envelope-wrapper.open .title-text-small { font-size: 1.8em; color: #fff0f3; text-shadow: 0 0 20px #ff4d6d, 0 0 40px #c9184a, 0 0 60px #4a0010; }
+        #envelope-wrapper.open .title-text-small { font-size: 1.8em; color: #fff; text-shadow: 0 0 20px #ff4d6d, 0 0 40px #c9184a, 0 0 60px #4a0010; }
         .env-piece { transition: opacity 1s 1.5s, transform 1s 1.5s; }
         #envelope-wrapper.open .env-piece { opacity: 0; transform: translateY(50px); }
 
@@ -86,20 +106,17 @@
         @keyframes popInStack { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 100% { opacity: 1; transform: var(--target-transform); } }
 
         /* Content Overlay */
-        #content-overlay { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(13, 2, 5, 0.75); backdrop-filter: blur(8px); z-index: 50; overflow-y: auto; padding: 40px 0; opacity: 0; transition: opacity 0.5s ease; animation: fadeInOverlay 2s ease forwards; }
+        #content-overlay { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 50; overflow-y: auto; padding: 40px 0; opacity: 0; transition: opacity 0.5s ease; animation: fadeInOverlay 2s ease forwards; }
         @keyframes fadeInOverlay { to { opacity: 1; } }
 
-        .glass-container { max-width: 600px; margin: auto; text-align: left; padding: 30px 20px; background: rgba(255, 240, 243, 0.95); border-radius: 20px; box-shadow: 0 0 40px rgba(201, 24, 74, 0.3); border: 1px solid rgba(255, 179, 198, 0.5); display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease; }
-        
-        /* Typewriter specific styles */
-        .secret-love-letter { font-size: 1.15em; line-height: 1.6; color: #590d22; margin-bottom: 20px; font-style: italic; text-align: center; padding: 0 10px; font-weight: 500; width: 100%; min-height: 200px; }
+        .glass-container { max-width: 600px; margin: auto; text-align: left; padding: 30px 20px; background: rgba(255, 240, 243, 0.95); border-radius: 20px; box-shadow: 0 0 40px rgba(201, 24, 74, 0.6); border: 1px solid rgba(255, 179, 198, 0.5); display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease; }
+        .secret-love-letter { font-size: 1.15em; line-height: 1.6; color: #590d22; margin-bottom: 20px; font-style: italic; text-align: center; padding: 0 10px; font-weight: 500; width: 100%; }
         .secret-love-letter p { margin-bottom: 15px; }
-        .cursor::after { content: '|'; animation: blink 1s step-end infinite; color: #c9184a; font-weight: bold; }
-        @keyframes blink { 50% { opacity: 0; } }
         
-        .signature { text-align: right; font-weight: bold; color: #c9184a; margin-top: 25px; font-size: 0.95em; font-family: 'Georgia', serif; width: 100%; padding-right: 15px; display: none; opacity: 0; }
+        /* New Signature Styling */
+        .signature { text-align: right; font-weight: bold; color: #c9184a; margin-top: 25px; font-size: 0.95em; font-family: 'Georgia', serif; width: 100%; padding-right: 15px; }
 
-        .btn-yes { background-color: #d6336c; color: white; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); font-size: 1.2em; font-weight: bold; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, background-color 0.3s ease; display: none; opacity: 0; margin-top: 15px;}
+        .btn-yes { background-color: #d6336c; color: white; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); font-size: 1.2em; font-weight: bold; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, background-color 0.3s ease;}
         .btn-yes:hover { background-color: #c9184a; transform: scale(0.95); }
 
         .timeline-header { color: #c9184a; text-align: center; font-size: 2.2em; margin-bottom: 10px; width: 100%; }
@@ -115,9 +132,30 @@
         .black-point::before { border-color: #000; background: #111; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
         .black-point .timeline-date { color: #555; }
         .black-point .timeline-content { background: #1a1a1a; color: #eee; box-shadow: inset 0 0 20px rgba(0,0,0,0.9); border: 1px solid #333; }
+        
+        /* Little Signs of Love CSS */
+        .signs-of-love {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1; /* Above blur but below UI */
+            font-size: 15px;
+            color: rgba(255, 77, 109, 0.7);
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.8);
+            animation: signsOfLoveFloat 8s linear forwards;
+            opacity: 0;
+            transform: scale(0);
+        }
+        @keyframes signsOfLoveFloat {
+            0% { top: 100vh; opacity: 0; transform: scale(0) rotate(0deg); }
+            10% { opacity: 1; transform: scale(1) rotate(0deg); }
+            80% { opacity: 1; transform: scale(1.1) rotate(0deg); }
+            100% { top: -10vh; opacity: 0; transform: scale(1) rotate(0deg); }
+        }
     </style>
 </head>
 <body>
+
+    <div id="permanent-overlay"></div>
 
     <audio id="bg-music" loop>
         <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
@@ -158,9 +196,14 @@
 
     <div id="content-overlay">
         <div id="secret-letter-view" class="glass-container">
-            <div id="typed-letter-container" class="secret-love-letter cursor"></div>
-            
-            <p class="signature" id="letter-sig">Written by Yessine ,10/04/2026 ✍️</p>
+            <div class="secret-love-letter">
+                <p>behi kbal me netaadew l surprise okhra nheb nkollek un petit message :</p>
+                <p>over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.</p>
+                <p>Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.</p>
+                <p>Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.</p>
+                <p>naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU .</p>
+                <p class="signature"> Yessine on April 10, 2026 ✍️</p>
+            </div>
             <button id="btn-next" class="btn-yes" onclick="showTimeline()">Next ❤️❤️❤️</button>
         </div>
 
@@ -195,20 +238,34 @@
         const targetMonth = 7; 
         const targetDay = 24;
 
-        // LOCAL FILE NAMES
+        // LOCAL FILE NAMES - FIXED EXTENSIONS TO MATCH screenshot
         const backgroundPhotoUrl = "bg.jpg"; 
         const heartPhotos = ["soloo.png", "soloo1.jpg"];
         const soloPhotos = ["solo2.png", "solo3.png", "solo4.jpg", "solo5.jpg"];
         const duoPhotos = ["duo1.jpg", "duo2.jpg", "duo3.jpg", "duo4.jpg", "duo5.jpg"];
 
-        // Text paragraphs for the Typewriter Effect
-        const letterParagraphs = [
-            "behi kbal me netaadew l surprise okhra nheb nkollek un petit message :",
-            "over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.",
-            "Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.",
-            "Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.",
-            "naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU ."
-        ];
+        // Little signs of love function
+        function spawnLittleHearts() {
+            const heartIcons = ['💖', '❤️', '💕', '💗', '💓', '💞', '😍', '✨'];
+            setInterval(() => {
+                let heart = document.createElement("div");
+                heart.innerHTML = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                heart.className = "signs-of-love";
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.top = (Math.random() * 10 + 95) + "vh"; // Spawn slightly below bottom
+                heart.style.opacity = Math.random() * 0.4 + 0.3; // Random lower opacity for subtlety
+                heart.style.transition = "transform 8s linear"; // Smooth rotational transition
+                document.body.appendChild(heart);
+
+                // Add random rotation and subtle side-to-side shift after spawning
+                setTimeout(() => {
+                    heart.style.transform = `translateX(${Math.random() * 60 - 30}px) rotate(${Math.random() * 180 - 90}deg)`;
+                }, 50);
+
+                setTimeout(() => heart.remove(), 8000);
+            }, 800);
+        }
+        spawnLittleHearts();
 
         let taps = 0;
         window.secretUnlock = function() {
@@ -245,11 +302,6 @@
 
         function triggerPhaseOne() {
             if (window.unlocked) return; window.unlocked = true;
-
-            document.body.style.backgroundImage = `url('${backgroundPhotoUrl}')`;
-            document.body.style.backgroundSize = "cover";
-            document.body.style.backgroundPosition = "center";
-            document.body.style.backgroundAttachment = "fixed";
 
             document.getElementById("countdown-screen").style.display = "none";
             document.getElementById("question-view").style.display = "flex";
@@ -349,59 +401,9 @@
                     document.getElementById("content-overlay").style.display = "block";
                     document.getElementById("eye-toggle").style.display = "block";
                     document.body.style.overflow = "auto";
-                    
-                    // Trigger Typewriter Effect instead of showing text immediately
-                    startTypewriter();
                 }, 10000);
 
             }, 500);
-        }
-
-        // --- TYPEWRITER ENGINE ---
-        let pIndex = 0;
-        let charIndex = 0;
-        let currentP = null;
-
-        function startTypewriter() {
-            const container = document.getElementById('typed-letter-container');
-            
-            function typeNext() {
-                if (pIndex < letterParagraphs.length) {
-                    if (!currentP) {
-                        currentP = document.createElement('p');
-                        container.appendChild(currentP);
-                    }
-                    
-                    if (charIndex < letterParagraphs[pIndex].length) {
-                        currentP.innerHTML += letterParagraphs[pIndex].charAt(charIndex);
-                        charIndex++;
-                        setTimeout(typeNext, 40); // Speed of typing (lower is faster)
-                    } else {
-                        pIndex++;
-                        charIndex = 0;
-                        currentP = null;
-                        setTimeout(typeNext, 600); // Pause between paragraphs
-                    }
-                } else {
-                    // Typing finished! Remove cursor class and show the signature & button
-                    container.classList.remove('cursor');
-                    
-                    const sig = document.getElementById('letter-sig');
-                    const btn = document.getElementById('btn-next');
-                    
-                    sig.style.display = 'block';
-                    btn.style.display = 'block';
-                    
-                    // Fade them in smoothly
-                    setTimeout(() => {
-                        sig.style.opacity = '1';
-                        sig.style.animation = 'fadeInOverlay 1.5s ease forwards';
-                        btn.style.opacity = '1';
-                        btn.style.animation = 'fadeInOverlay 1.5s ease forwards';
-                    }, 100);
-                }
-            }
-            typeNext();
         }
 
         function startPhotoStacking() {
@@ -409,13 +411,13 @@
             const cols = 3; const rows = 5;
             const colWidth = 100 / cols; const rowHeight = 100 / rows;
             let currentCell = 0; let currentLayer = 1;
-            let totalPhotosSpawned = 0; 
 
             const photoInterval = setInterval(() => {
                 if (currentLayer > 2) { clearInterval(photoInterval); return; }
                 const col = currentCell % cols; const row = Math.floor(currentCell / cols);
                 const img = document.createElement("img");
                 
+                // alternating logic for flood
                 const photoSrc = (totalPhotosSpawned % 2 === 0) 
                     ? soloPhotos[Math.floor(Math.random() * soloPhotos.length)]
                     : duoPhotos[Math.floor(Math.random() * duoPhotos.length)];
@@ -446,19 +448,23 @@
             }, 180); 
         }
 
+        // --- FIXED HIDE/SHOW TEXT BUTTON LOGIC ---
         window.toggleOverlay = function() {
             const containers = document.querySelectorAll(".glass-container");
             const eye = document.getElementById("eye-toggle");
             
+            // Checking first container to find state
             let isHidden = containers[0].style.opacity === "0";
 
             if (isHidden) {
+                // Showing all containers
                 containers.forEach(c => {
                     c.style.opacity = "1";
                     c.style.pointerEvents = "auto";
                 });
                 eye.innerText = "👁️ Hide Text";
             } else {
+                // Hiding all containers
                 containers.forEach(c => {
                     c.style.opacity = "0";
                     c.style.pointerEvents = "none";
