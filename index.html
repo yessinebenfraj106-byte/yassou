@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Surprise...</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Base & Typography */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0205; overflow: hidden; text-align: center; margin: 0; padding: 0; color: white; transition: background-image 1.5s ease-in-out; }
+        .timeline-content::first-letter, .secret-love-letter p::first-letter { text-transform: uppercase; }
+
+        /* Modal & UI Elements */
+        #photo-modal { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; cursor: pointer; }
+        #modal-img { max-width: 90vw; max-height: 90vh; border-radius: 15px; box-shadow: 0 0 30px rgba(255, 77, 109, 0.5); transform: scale(0); transition: transform 0.3s ease; }
+        #photo-modal.show { display: flex; }
+        #photo-modal.show #modal-img { transform: scale(1); }
+
+        #eye-toggle { position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 20px; color: white; cursor: pointer; display: none; backdrop-filter: blur(5px); border: 1px solid rgba(255,179,198,0.3); transition: background 0.3s; }
+        #eye-toggle:active { background: rgba(255, 77, 109, 0.5); }
+
+        /* =========================================
+           UPGRADED COUNTDOWN UI
+           ========================================= */
+        #countdown-screen { 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            height: 100vh; width: 100vw; position: absolute; z-index: 1000; 
+            background: radial-gradient(circle at center, #4a0010 0%, #0d0205 100%); 
+        }
+        
+        #countdown-screen h1 { 
+            font-size: 4em; margin-bottom: 5px; user-select: none; cursor: pointer; color: #fff0f3; 
+            text-shadow: 0 0 30px rgba(255, 77, 109, 0.8), 0 0 10px rgba(255, 255, 255, 0.3); 
+            transition: transform 0.1s, text-shadow 0.1s; letter-spacing: 1px;
+        }
+        #countdown-screen h1:active { transform: scale(0.95); text-shadow: 0 0 10px rgba(255, 77, 109, 0.5); }
+        
+        #countdown-screen p { 
+            font-size: 1.2em; font-weight: 500; color: #ffb3c6; margin-bottom: 40px; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5); letter-spacing: 0.5px; opacity: 0.9;
+        }
+
+        /* Frosted Glass Container for Timer */
+        #timer-container {
+            padding: 30px 40px; background: rgba(255, 255, 255, 0.03); 
+            border-radius: 25px; border: 1px solid rgba(255, 179, 198, 0.15); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); 
+            backdrop-filter: blur(15px);
+        }
+
+        #timer { display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        
+        .time-unit { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        
+        /* Realistic Split-Flap Cards */
+        .time-unit .num { 
+            font-size: 2.8em; font-weight: 800; color: #fff; 
+            background: linear-gradient(180deg, rgba(214, 51, 108, 0.95) 0%, rgba(161, 15, 60, 0.95) 100%);
+            padding: 15px 10px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 5px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 179, 198, 0.3);
+            min-width: 75px; position: relative; perspective: 500px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        /* The horizontal cut line across the card */
+        .time-unit .num::after {
+            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 0, 0, 0.5); box-shadow: 0 1px 0px rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%); z-index: 10; pointer-events: none;
+        }
+
+        /* Enhanced Flip Physics */
+        .flip { animation: flipCard 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); }
+        @keyframes flipCard {
+            0% { transform: rotateX(0deg) scale(1); filter: brightness(1); }
+            50% { transform: rotateX(-90deg) scale(1.05); filter: brightness(0.7); box-shadow: 0 20px 30px rgba(0,0,0,0.8); }
+            100% { transform: rotateX(0deg) scale(1); filter: brightness(1); }
+        }
+        
+        .time-unit .label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 2px; color: #ffb3c6; margin-top: 12px; font-weight: 600; opacity: 0.8; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        
+        .colon { font-size: 2.5em; font-weight: 900; color: #ff4d6d; animation: pulseColon 1.5s infinite ease-in-out; padding-bottom: 30px; opacity: 0.8; }
+        @keyframes pulseColon { 
+            0%, 100% { opacity: 1; transform: scale(1); text-shadow: 0 0 20px rgba(255, 77, 109, 0.8); } 
+            50% { opacity: 0.3; transform: scale(0.9); text-shadow: none; } 
+        }
+        /* ========================================= */
+
+        /* Heart Question View */
+        #question-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.2); z-index: 60; justify-content: center; align-items: center; overflow: hidden; }
+        #question-content { z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+        #question-view h2 { font-size: 2.5em; text-shadow: 0 0 20px #ff4d6d, 0 0 10px #000; margin-bottom: 10px; color: #fff; text-align: center; }
+        #question-view p { font-size: 1.2em; color: #ffccd5; font-style: italic; margin-top: 0; text-shadow: 0 0 5px #000;}
+        #yes-btn-scatter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* Photo Heart CSS */
+        .heart-photo { 
+            position: absolute; width: 75px; height: 75px; object-fit: cover; border-radius: 50%; 
+            border: 3px solid #ffb3c6; box-shadow: 0 4px 15px rgba(214, 51, 108, 0.8); opacity: 0; cursor: pointer; 
+            transform: translate(-50%, -50%) scale(0);
+            animation: popInHeart 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, heartbeat 1.5s infinite alternate ease-in-out 0.6s; 
+        }
+        @keyframes popInHeart { to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        @keyframes heartbeat { 
+            from { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(214, 51, 108, 0.6); border-color: #ffb3c6; } 
+            to { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 30px #fff; border-color: #fff; } 
+        }
+
+        /* Explosion Shatter */
+        .explode-btn { animation: explodeOut 0.8s forwards cubic-bezier(0.2, 0.8, 0.2, 1) !important; }
+        @keyframes explodeOut { 
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
+            100% { transform: translate(var(--explode-x), var(--explode-y)) scale(0); opacity: 0; } 
+        }
+
+        /* Envelope */
+        #envelope-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 30; }
+        #envelope-wrapper { position: relative; width: 320px; height: 220px; perspective: 1000px; transform: translateY(-50px); opacity: 0; animation: dropIn 1s ease forwards; }
+        @keyframes dropIn { to { transform: translateY(0); opacity: 1; } }
+
+        .env-back { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #900d2f; border-radius: 8px; z-index: 1; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .env-front { position: absolute; bottom: 0; left: 0; width: 0; height: 0; border-left: 160px solid #c9184a; border-right: 160px solid #c9184a; border-bottom: 120px solid #b71340; border-top: 100px solid transparent; z-index: 3; border-radius: 0 0 8px 8px; }
+        .env-flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 120px solid #ff4d6d; transform-origin: top; transition: transform 0.8s ease-in-out; z-index: 4; }
+        .env-letter { position: absolute; top: 10px; left: 10px; width: 300px; height: 200px; background: #fff0f3; border-radius: 8px; z-index: 2; overflow: hidden; display: flex; justify-content: center; align-items: center; transition: transform 1.2s ease-in-out 0.8s, background 1s 2s; }
+        .title-text-small { font-size: 0.8em; color: #c9184a; text-align: center; margin: 0; line-height: 1.3; width: 100%; padding: 0 10px; transition: font-size 1.2s ease-in-out 0.8s, color 1s 2s, text-shadow 1s 2s; }
+
+        #envelope-wrapper.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+        #envelope-wrapper.open .env-letter { transform: translateY(-30vh) scale(1.6); z-index: 10; background: transparent; overflow: visible; }
+        #envelope-wrapper.open .title-text-small { font-size: 1.8em; color: #fff; text-shadow: 0 0 20px #ff4d6d, 0 0 40px #c9184a, 0 0 60px #4a0010; }
+        .env-piece { transition: opacity 1s 1.5s, transform 1s 1.5s; }
+        #envelope-wrapper.open .env-piece { opacity: 0; transform: translateY(50px); }
+
+        .shining-heart { position: absolute; color: #ff4d6d; z-index: 1; opacity: 0; animation: shine 4s ease-in-out forwards; pointer-events: none; }
+        @keyframes shine { 0% { opacity: 0; transform: translateY(0) scale(0.5); text-shadow: 0 0 5px #ff4d6d; } 50% { opacity: 1; transform: translateY(-20px) scale(1.5); text-shadow: 0 0 20px #ff4d6d, 0 0 40px #ffb3c6; } 100% { opacity: 0; transform: translateY(-40px) scale(1); text-shadow: 0 0 5px #ff4d6d; } }
+
+        /* Stacking Photos */
+        #photo-stack-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; pointer-events: none; }
+        .stacked-photo { position: absolute; width: 150px; height: 180px; object-fit: cover; border: 4px solid #fff0f3; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); opacity: 0; animation: popInStack 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; cursor: pointer; }
+        @keyframes popInStack { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 100% { opacity: 1; transform: var(--target-transform); } }
+
+        /* Content Overlay */
+        #content-overlay { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 50; overflow-y: auto; padding: 40px 0; opacity: 0; transition: opacity 0.5s ease; animation: fadeInOverlay 2s ease forwards; }
+        @keyframes fadeInOverlay { to { opacity: 1; } }
+
+        .glass-container { max-width: 600px; margin: auto; text-align: left; padding: 30px 20px; background: rgba(255, 240, 243, 0.95); border-radius: 20px; box-shadow: 0 0 40px rgba(201, 24, 74, 0.6); border: 1px solid rgba(255, 179, 198, 0.5); display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease; }
+        .secret-love-letter { font-size: 1.15em; line-height: 1.6; color: #590d22; margin-bottom: 30px; font-style: italic; text-align: center; padding: 0 10px; font-weight: 500; }
+        .secret-love-letter p { margin-bottom: 15px; }
+
+        .btn-yes { background-color: #d6336c; color: white; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); font-size: 1.2em; font-weight: bold; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, background-color 0.3s ease;}
+        .btn-yes:hover { background-color: #c9184a; transform: scale(0.95); }
+
+        .timeline-header { color: #c9184a; text-align: center; font-size: 2.2em; margin-bottom: 10px; width: 100%; }
+        .timeline { border-left: 4px solid #ffb3c6; margin: 20px 0; padding-left: 20px; width: 100%; box-sizing: border-box; }
+        .timeline-item { margin-bottom: 30px; position: relative; opacity: 0; animation: slideUpFade 0.8s ease forwards; }
+        .timeline-item:nth-child(1) { animation-delay: 0.2s; } .timeline-item:nth-child(2) { animation-delay: 0.6s; } .timeline-item:nth-child(3) { animation-delay: 1.0s; } .timeline-item:nth-child(4) { animation-delay: 1.4s; } .timeline-item:nth-child(5) { animation-delay: 1.8s; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        .timeline-item::before { content: ''; position: absolute; left: -30px; top: 0; width: 14px; height: 14px; background: #fff0f3; border: 4px solid #ff4d6d; border-radius: 50%; box-shadow: 0 0 10px rgba(255, 77, 109, 0.5); }
+        .timeline-date { font-weight: bold; color: #c9184a; font-size: 1.1em; }
+        .timeline-content { background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); margin-top: 8px; color: #333; line-height: 1.5; }
+
+        .black-point::before { border-color: #000; background: #111; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .black-point .timeline-date { color: #555; }
+        .black-point .timeline-content { background: #1a1a1a; color: #eee; box-shadow: inset 0 0 20px rgba(0,0,0,0.9); border: 1px solid #333; }
+    </style>
+</head>
+<body>
+
+    <div id="permanent-overlay" style="opacity: 0; transition: opacity 1.5s ease;"></div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="photo-modal" onclick="closePhotoModal()">
+        <img id="modal-img" src="" alt="Zoomed Memory">
+    </div>
+
+    <div id="eye-toggle" onclick="toggleOverlay()">👁️ Hide Text</div>
+
+    <div id="countdown-screen">
+        <h1 id="peeking-text" onclick="secretUnlock()">No Peeking! 🙈</h1>
+        <p>surprise l yassoutiiii mais mch tawa 😉</p>
+        
+        <div id="timer-container">
+            <div id="timer">
+                <div class="time-unit"><div class="num" id="val-months">0</div><div class="label">Months</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-days">0</div><div class="label">Days</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-hours">0</div><div class="label">Hours</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-mins">0</div><div class="label">Mins</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-secs">0</div><div class="label">Secs</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="question-view">
+        <div id="yes-btn-scatter"></div>
+        <div id="question-content">
+            <h2>Do you want to open the envelope?</h2>
+            <p>(Tap any photo to say YES!)</p>
+        </div>
+    </div>
+
+    <div id="envelope-view">
+        <div id="envelope-wrapper">
+            <div class="env-back env-piece"></div>
+            <div class="env-letter" id="the-letter">
+                <h1 class="title-text-small">JOYEUXXX ANNIVERSAIREEEE<br>YASSOUTIII YA ROUHIIII 💋💋💋💗💗💓💓❤️❤️❤️</h1>
+            </div>
+            <div class="env-front env-piece"></div>
+            <div class="env-flap env-piece"></div>
+        </div>
+    </div>
+
+    <div id="photo-stack-container"></div>
+
+    <div id="content-overlay">
+        <div id="secret-letter-view" class="glass-container">
+            <div class="secret-love-letter">
+                <p>behi kbal me netaadew l surprise okhra nheb nkollek un petit message :</p>
+                <p>over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.</p>
+                <p>Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.</p>
+                <p>Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.</p>
+                <p>naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU .</p>
+            </div>
+            <button id="btn-next" class="btn-yes" onclick="showTimeline()">Next ❤️❤️❤️</button>
+        </div>
+
+        <div id="timeline-view" class="glass-container" style="display:none;">
+            <h2 class="timeline-header">Our Story 📖</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">September 15, 2024</div>
+                    <div class="timeline-content">awl nhar tkablna fih . waktha nsit chnwa sarli amma netfaker andich cnx w waktha aarft esmek martin ntfkr w hatta bch nlwj al insta narka rohi doub me rawht l dar nsit el esm dnc rassatli nestanna</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">September 16, 2024</div>
+                    <div class="timeline-content">just baad b nhar enfin njmt ngamer esmek w hfadhtou w rkitk al insta w little detail ntfkr waktha kbeltni ken al spam mch main w waktha awl haja hkina aaleha heya khedma wala fourniture illi aataha abdallah taa l aarbi</div>
+                </div>
+                <div class="timeline-item black-point">
+                    <div class="timeline-date">September 22, 2025</div>
+                    <div class="timeline-content">baad presque aam w jemaa bdhbt mn awl mara rina feha baadhna sar illi sar nhartha w waktha ntfkr bdet période kbalha waktha jewbtnich w baadha jbdtlk ala hkeyet khichi w enti hkit l yasmine w mbaadha kol me ns2lk wala faza tjewbni b ghneyet young "Oumouri" lin wallit traumatisé menha</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">October 31, 2025</div>
+                    <div class="timeline-content">عادت المياه إلى مجاريها enfin</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">August 24, 2026</div>
+                    <div class="timeline-content">njmch nahki barcha alih just u know annou it s a special day for my special one</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const targetMonth = 7; 
+        const targetDay = 24;
+
+        // 🚨 PRECISE FILENAMES MATCHING YOUR SCREENSHOT 🚨
+        const heartPhotos = ["soloo.png", "soloo1.jpg"];
+        const soloPhotos = ["solo2.png", "solo3.png", "solo4.jpg", "solo5.jpg"];
+        const duoPhotos = ["duo1.jpg", "duo2.jpg", "duo3.jpg", "duo4.jpg", "duo5.jpg"];
+
+        // CONSTANT FLOATING HEARTS BACKGROUND
+        function spawnLittleHearts() {
+            setInterval(() => {
+                let heart = document.createElement("div");
+                heart.innerHTML = "💖";
+                heart.style.position = "fixed";
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.top = "100vh";
+                heart.style.fontSize = (Math.random() * 15 + 10) + "px";
+                heart.style.opacity = Math.random() * 0.4 + 0.2; 
+                heart.style.zIndex = "-1"; 
+                heart.style.transition = "transform 8s linear, top 8s linear, opacity 8s linear";
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.style.top = "-10vh";
+                    heart.style.transform = `translateX(${Math.random() * 100 - 50}px) rotate(${Math.random() * 180}deg)`;
+                    heart.style.opacity = "0";
+                }, 50);
+
+                setTimeout(() => heart.remove(), 8000);
+            }, 800);
+        }
+        spawnLittleHearts();
+
+        let taps = 0;
+        window.secretUnlock = function() {
+            taps++;
+            const textEl = document.getElementById("peeking-text");
+            textEl.style.opacity = "0.5";
+            setTimeout(() => { textEl.style.opacity = "1"; }, 100);
+            if (taps >= 10) { triggerPhaseOne(); }
+        }
+
+        // --- FLIP CLOCK TIMER LOGIC ---
+        let prevTimes = { months: -1, days: -1, hours: -1, mins: -1, secs: -1 };
+        
+        function updateTimer() {
+            const now = new Date();
+            let targetDate = new Date(now.getFullYear(), targetMonth, targetDay, 0, 0, 0);
+            if (now.getTime() > targetDate.getTime()) targetDate.setFullYear(now.getFullYear() + 1);
+
+            let months = (targetDate.getFullYear() - now.getFullYear()) * 12 + (targetDate.getMonth() - now.getMonth());
+            let tempDate = new Date(now.getFullYear(), now.getMonth() + months, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+            if (tempDate.getTime() > targetDate.getTime()) {
+                months--;
+                tempDate = new Date(now.getFullYear(), now.getMonth() + months, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+            }
+
+            const dist = targetDate.getTime() - tempDate.getTime();
+            
+            const currentTimes = {
+                months: months,
+                days: Math.floor(dist / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                mins: Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)),
+                secs: Math.floor((dist % (1000 * 60)) / 1000)
+            };
+
+            for (let key in currentTimes) {
+                if (currentTimes[key] !== prevTimes[key]) {
+                    let el = document.getElementById(`val-${key}`);
+                    if(el) {
+                        el.innerText = currentTimes[key];
+                        el.classList.remove('flip');
+                        void el.offsetWidth; // Force browser to register reset
+                        el.classList.add('flip');
+                    }
+                    prevTimes[key] = currentTimes[key];
+                }
+            }
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        function triggerPhaseOne() {
+            if (window.unlocked) return; window.unlocked = true;
+
+            // Apply background photo smoothly ONLY after unlock
+            document.body.style.backgroundImage = "url('bg.jpg')";
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundAttachment = "fixed";
+            
+            // Fade in the pink overlay
+            document.getElementById("permanent-overlay").style.opacity = "1";
+
+            document.getElementById("countdown-screen").style.display = "none";
+            document.getElementById("question-view").style.display = "flex";
+
+            const scatterContainer = document.getElementById("yes-btn-scatter");
+            const numPoints = 22; 
+            const scale = 11; 
+            
+            for(let i=0; i<numPoints; i++) {
+                let t = (i / numPoints) * Math.PI * 2;
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                
+                let img = document.createElement("img");
+                img.className = "heart-photo";
+                img.src = heartPhotos[i % heartPhotos.length]; 
+                
+                img.style.left = `calc(50% + ${x * scale}px)`;
+                img.style.top = `calc(50% + ${y * scale + 30}px)`; 
+                img.style.animationDelay = `${i * 0.05}s`; 
+                
+                img.onclick = function(e) { triggerExplosion(e.clientX, e.clientY); };
+                scatterContainer.appendChild(img);
+            }
+        }
+
+        function triggerExplosion(clickX, clickY) {
+            const images = document.querySelectorAll('.heart-photo');
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            images.forEach(img => {
+                const rect = img.getBoundingClientRect();
+                const imgX = rect.left + rect.width / 2;
+                const imgY = rect.top + rect.height / 2;
+                
+                const dirX = imgX - centerX;
+                const dirY = imgY - centerY;
+                const dist = Math.sqrt(dirX*dirX + dirY*dirY) || 1;
+                
+                const pushForce = 800; 
+                img.style.setProperty('--explode-x', `${(dirX/dist) * pushForce}px`);
+                img.style.setProperty('--explode-y', `${(dirY/dist) * pushForce}px`);
+                img.classList.add('explode-btn');
+            });
+
+            setTimeout(openEnvelope, 500);
+        }
+
+        function fireConfetti() {
+            var count = 300;
+            var defaults = { origin: { y: 0.6 }, zIndex: 5000, colors: ['#ff4d6d', '#c9184a', '#ffb3c6', '#ffffff'] };
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) }));
+            }
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        window.openEnvelope = function() {
+            const audio = document.getElementById("bg-music");
+            audio.volume = 0.5; 
+            audio.play().catch(e => console.log("Audio autoplay was blocked by browser"));
+
+            document.getElementById("question-view").style.display = "none";
+            document.getElementById("envelope-view").style.display = "flex";
+
+            setTimeout(() => {
+                document.getElementById("envelope-wrapper").classList.add("open");
+                setTimeout(fireConfetti, 400); 
+                
+                // Exploding massive hearts
+                let heartMultiplier = 1;
+                setInterval(() => {
+                    for(let i=0; i<heartMultiplier; i++) {
+                        const heart = document.createElement("div");
+                        heart.innerHTML = "❤";
+                        heart.className = "shining-heart";
+                        heart.style.left = Math.random() * 100 + "vw";
+                        heart.style.top = Math.random() * 100 + "vh";
+                        heart.style.fontSize = (Math.random() * 20 + 15) + "px"; 
+                        document.body.appendChild(heart);
+                        setTimeout(() => heart.remove(), 4000);
+                    }
+                    if(Math.random() > 0.8 && heartMultiplier < 12) heartMultiplier++;
+                }, 200); 
+
+                setTimeout(startPhotoStacking, 1800);
+
+                setTimeout(() => {
+                    document.getElementById("content-overlay").style.display = "block";
+                    document.getElementById("eye-toggle").style.display = "block";
+                    document.body.style.overflow = "auto";
+                }, 10000);
+
+            }, 500);
+        }
+
+        function startPhotoStacking() {
+            const stackContainer = document.getElementById("photo-stack-container");
+            const cols = 3; const rows = 5;
+            const colWidth = 100 / cols; const rowHeight = 100 / rows;
+            let currentCell = 0; let currentLayer = 1;
+
+            const photoInterval = setInterval(() => {
+                if (currentLayer > 2) { clearInterval(photoInterval); return; }
+                const col = currentCell % cols; const row = Math.floor(currentCell / cols);
+                const img = document.createElement("img");
+                
+                const photoSrc = (currentLayer === 1) 
+                    ? soloPhotos[Math.floor(Math.random() * soloPhotos.length)]
+                    : duoPhotos[Math.floor(Math.random() * duoPhotos.length)];
+                    
+                img.src = photoSrc;
+                img.className = "stacked-photo";
+                img.onclick = function() { openPhotoModal(photoSrc); };
+                
+                let baseLeft = (col * colWidth) + (colWidth / 2);
+                let baseTop = (row * rowHeight) + (rowHeight / 2);
+                const layerShift = (currentLayer === 2) ? 8 : 0; 
+                const jitterLeft = (Math.random() * 10 - 5); 
+                const jitterTop = (Math.random() * 10 - 5);
+                
+                img.style.left = `calc(${baseLeft + jitterLeft + layerShift}vw - 75px)`; 
+                img.style.top = `calc(${baseTop + jitterTop + layerShift}vh - 90px)`;   
+                img.style.zIndex = 10 + currentCell + (currentLayer * 100);
+                
+                const randomRotation = Math.random() * 40 - 20; 
+                const scale = (currentLayer === 2) ? 1.15 : 1;
+                img.style.setProperty('--target-transform', `rotate(${randomRotation}deg) scale(${scale})`);
+                
+                stackContainer.appendChild(img);
+                currentCell++;
+                if (currentCell >= cols * rows) { currentCell = 0; currentLayer++; }
+            }, 180); 
+        }
+
+        // --- FIXED HIDE/SHOW TEXT BUTTON LOGIC ---
+        window.toggleOverlay = function() {
+            const containers = document.querySelectorAll(".glass-container");
+            const eye = document.getElementById("eye-toggle");
+            
+            let isHidden = containers[0].style.opacity === "0";
+
+            if (isHidden) {
+                containers.forEach(c => {
+                    c.style.opacity = "1";
+                    c.style.pointerEvents = "auto";
+                });
+                eye.innerText = "👁️ Hide Text";
+            } else {
+                containers.forEach(c => {
+                    c.style.opacity = "0";
+                    c.style.pointerEvents = "none";
+                });
+                eye.innerText = "👁️ Show Text";
+            }
+        }
+
+        window.openPhotoModal = function(src) {
+            const modal = document.getElementById("photo-modal");
+            document.getElementById("modal-img").src = src;
+            modal.classList.add("show");
+        }
+
+        window.closePhotoModal = function() {
+            document.getElementById("photo-modal").classList.remove("show");
+        }
+
+        window.showTimeline = function() {
+            const letterView = document.getElementById("secret-letter-view");
+            const timelineView = document.getElementById("timeline-view");
+            
+            letterView.style.transition = "opacity 0.5s ease";
+            letterView.style.opacity = "0";
+            
+            setTimeout(() => {
+                letterView.style.display = "none";
+                timelineView.style.display = "flex";
+                document.getElementById("content-overlay").scrollTo({ top: 0, behavior: 'smooth' });
+            }, 500);
+        }
+    </script>
+</body>
+</html>
