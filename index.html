@@ -41,11 +41,11 @@
         #eye-toggle { position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 20px; color: white; cursor: pointer; display: none; backdrop-filter: blur(5px); border: 1px solid rgba(255,179,198,0.3); transition: background 0.3s; }
         #eye-toggle:active { background: rgba(255, 77, 109, 0.5); }
 
-        /* Countdown Screen - Pink Gradient */
+        /* Countdown Screen - Darker Rich Pink Gradient */
         #countdown-screen { 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             height: 100vh; width: 100vw; position: absolute; z-index: 1000; 
-            background: radial-gradient(circle at center, #ffb3c6 0%, #ff758c 100%); 
+            background: radial-gradient(circle at center, #d85a7a 0%, #a61c3f 100%); 
         }
         
         #countdown-screen h1 { 
@@ -57,14 +57,14 @@
         
         #countdown-screen p { 
             font-size: 1.2em; font-weight: 500; color: #ffe1e8; margin-bottom: 40px; 
-            text-shadow: 0 2px 4px rgba(214, 51, 108, 0.5); letter-spacing: 0.5px; opacity: 0.9;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: 0.5px; opacity: 0.9;
         }
 
         /* Frosted Glass Container for Timer */
         #timer-container {
-            padding: 30px 40px; background: rgba(255, 255, 255, 0.15); 
-            border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.4); 
-            box-shadow: 0 20px 50px rgba(214, 51, 108, 0.3), inset 0 0 20px rgba(255,255,255,0.2); 
+            padding: 30px 40px; background: rgba(255, 255, 255, 0.12); 
+            border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.3); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.1); 
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); /* Safari support */
         }
@@ -73,34 +73,21 @@
         
         .time-unit { display: flex; flex-direction: column; align-items: center; width: 80px; }
         
-        /* Realistic Split-Flap Cards */
+        /* Smooth, non-flipping premium cards */
         .time-unit .num { 
             font-size: 2.8em; font-weight: 800; color: #fff; 
-            background: linear-gradient(180deg, rgba(214, 51, 108, 0.95) 0%, rgba(161, 15, 60, 0.95) 100%);
+            background: linear-gradient(180deg, rgba(214, 51, 108, 0.85) 0%, rgba(161, 15, 60, 0.85) 100%);
             padding: 15px 10px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -2px 5px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255, 179, 198, 0.6);
-            min-width: 75px; position: relative; perspective: 500px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.4);
+            border: 1px solid rgba(255, 179, 198, 0.4);
+            min-width: 75px; position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
             display: flex; justify-content: center; align-items: center;
         }
         
-        .time-unit .num::after {
-            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px;
-            background: rgba(0, 0, 0, 0.4); box-shadow: 0 1px 0px rgba(255, 255, 255, 0.3);
-            transform: translateY(-50%); z-index: 10; pointer-events: none;
-        }
-
-        .flip { animation: flipCard 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); }
-        @keyframes flipCard {
-            0% { transform: rotateX(0deg) scale(1); filter: brightness(1); }
-            50% { transform: rotateX(-90deg) scale(1.05); filter: brightness(0.7); box-shadow: 0 20px 30px rgba(0,0,0,0.6); }
-            100% { transform: rotateX(0deg) scale(1); filter: brightness(1); }
-        }
+        .time-unit .label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 2px; color: #fff0f3; margin-top: 12px; font-weight: 700; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
         
-        .time-unit .label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 2px; color: #fff0f3; margin-top: 12px; font-weight: 700; text-shadow: 0 1px 3px rgba(214, 51, 108, 0.8); }
-        
-        .colon { font-size: 2.5em; font-weight: 900; color: #fff; animation: pulseColon 1.5s infinite ease-in-out; padding-bottom: 30px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+        .colon { font-size: 2.5em; font-weight: 900; color: #fff; animation: pulseColon 1.5s infinite ease-in-out; padding-bottom: 30px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
         @keyframes pulseColon { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.9); } }
 
         /* Heart Question View */
@@ -129,8 +116,8 @@
 
         /* Envelope */
         #envelope-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 30; }
-        #envelope-wrapper { position: relative; width: 320px; height: 220px; perspective: 1000px; transform: translateY(-50px); opacity: 0; animation: dropIn 1s ease forwards; }
-        @keyframes dropIn { to { transform: translateY(0); opacity: 1; } }
+        #envelope-wrapper { --scale-env: 1; position: relative; width: 320px; height: 220px; perspective: 1000px; transform: translateY(-50px) scale(var(--scale-env)); opacity: 0; animation: dropIn 1s ease forwards; }
+        @keyframes dropIn { to { transform: translateY(0) scale(var(--scale-env)); opacity: 1; } }
 
         .env-back { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #900d2f; border-radius: 8px; z-index: 1; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         .env-front { position: absolute; bottom: 0; left: 0; width: 0; height: 0; border-left: 160px solid #c9184a; border-right: 160px solid #c9184a; border-bottom: 120px solid #b71340; border-top: 100px solid transparent; z-index: 3; border-radius: 0 0 8px 8px; }
@@ -149,12 +136,12 @@
         .stacked-photo { position: absolute; width: 150px; height: 180px; object-fit: cover; border: 4px solid #fff0f3; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); opacity: 0; animation: popInStack 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; cursor: pointer; }
         @keyframes popInStack { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 100% { opacity: 1; transform: var(--target-transform); } }
 
-        /* Content Overlay - Added smooth touch scrolling for mobile */
+        /* Content Overlay */
         #content-overlay { 
             display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: rgba(0,0,0,0.5); z-index: 50; overflow-y: auto; padding: 40px 0; 
             opacity: 0; transition: opacity 0.5s ease; animation: fadeInOverlay 2s ease forwards; 
-            -webkit-overflow-scrolling: touch; /* Crucial for smooth scroll on iPhones */
+            -webkit-overflow-scrolling: touch; 
         }
         @keyframes fadeInOverlay { to { opacity: 1; } }
 
@@ -189,27 +176,24 @@
         .black-point .timeline-date { color: #555; }
         .black-point .timeline-content { background: #1a1a1a; color: #eee; box-shadow: inset 0 0 20px rgba(0,0,0,0.9); border: 1px solid #333; }
         
-        /* Signs of Love */
+        /* Signs of Love (Only Hearts, EXACTLY 50% opacity) */
         .signs-of-love {
-            position: fixed; pointer-events: none; z-index: 1001; font-size: 24px;
+            position: fixed; pointer-events: none; z-index: 1001; font-size: 26px;
             color: rgba(255, 255, 255, 0.9); text-shadow: 0 0 15px rgba(255, 77, 109, 0.9);
             animation: signsOfLoveFloat 7s linear forwards; opacity: 0; transform: scale(0);
         }
         @keyframes signsOfLoveFloat {
             0% { top: 100vh; opacity: 0; transform: scale(0) rotate(0deg); }
-            10% { opacity: 1; transform: scale(1) rotate(0deg); }
-            80% { opacity: 1; transform: scale(1.2) rotate(0deg); }
+            10% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+            80% { opacity: 0.5; transform: scale(1.2) rotate(0deg); }
             100% { top: -10vh; opacity: 0; transform: scale(1) rotate(0deg); }
         }
 
-        /* =======================================================
-           MOBILE RESPONSIVENESS - FIXES SCALING FOR ALL PHONES
-           ======================================================= */
+        /* MOBILE RESPONSIVENESS */
         @media (max-width: 600px) {
             #countdown-screen h1 { font-size: 2.8em; }
             #countdown-screen p { font-size: 1.1em; padding: 0 15px; }
             
-            /* Shrink timer boxes to fit screen */
             #timer-container { padding: 20px 10px; width: 90%; }
             #timer { gap: 5px; }
             .time-unit { width: 55px; }
@@ -217,18 +201,14 @@
             .time-unit .label { font-size: 0.6em; letter-spacing: 1px; }
             .colon { font-size: 1.8em; padding-bottom: 20px; }
             
-            /* Shrink Heart Photos */
             .heart-photo { width: 50px; height: 50px; border-width: 2px; }
             #question-view h2 { font-size: 1.8em; }
             
-            /* Scale Envelope */
             #envelope-wrapper { transform: translateY(-50px) scale(0.8); }
             @keyframes dropIn { to { transform: translateY(0) scale(0.8); opacity: 1; } }
             #envelope-wrapper.open .env-letter { transform: translateY(-20vh) scale(1.4); }
             
-            /* Scale Stacking Photos */
             .stacked-photo { width: 110px; height: 135px; }
-            
             .secret-love-letter { font-size: 1em; }
             .timeline-header { font-size: 1.8em; }
         }
@@ -236,7 +216,7 @@
 </head>
 <body>
 
-    <div id="permanent-overlay"></div>
+    <div id="permanent-overlay" style="opacity: 0; transition: opacity 1.5s ease;"></div>
 
     <audio id="bg-music" loop>
         <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
@@ -333,9 +313,9 @@
         const soloPhotos = ["solo2.png", "solo3.png", "solo4.jpg", "solo5.jpg"];
         const duoPhotos = ["duo1.jpg", "duo2.jpg", "duo3.jpg", "duo4.jpg", "duo5.jpg"];
 
-        // Little signs of love
+        // Little signs of love - ONLY HEARTS
         function spawnLittleHearts() {
-            const heartIcons = ['💖', '❤️', '💕', '💗', '💓', '💞', '😍', '✨'];
+            const heartIcons = ['💖', '❤️', '💕', '💗', '💓', '💞'];
             setInterval(() => {
                 let heart = document.createElement("div");
                 heart.innerHTML = heartIcons[Math.floor(Math.random() * heartIcons.length)];
@@ -391,9 +371,6 @@
                     let el = document.getElementById(`val-${key}`);
                     if(el) {
                         el.innerText = currentTimes[key];
-                        el.classList.remove('flip');
-                        void el.offsetWidth; 
-                        el.classList.add('flip');
                     }
                     prevTimes[key] = currentTimes[key];
                 }
@@ -414,10 +391,10 @@
 
             const scatterContainer = document.getElementById("yes-btn-scatter");
             
-            // MOBILE DYNAMIC MATH: Shrinks the heart shape if on a narrow screen!
+            // MOBILE DYNAMIC MATH
             const isMobile = window.innerWidth < 600;
-            const numPoints = isMobile ? 16 : 22; // Less points on mobile so they don't overlap
-            const scale = isMobile ? 6 : 11; // Smaller heart radius on mobile
+            const numPoints = isMobile ? 16 : 22; 
+            const scale = isMobile ? 6 : 11; 
             
             for(let i=0; i<numPoints; i++) {
                 let t = (i / numPoints) * Math.PI * 2;
@@ -453,7 +430,7 @@
                 const dirY = imgY - centerY;
                 const dist = Math.sqrt(dirX*dirX + dirY*dirY) || 1;
                 
-                const pushForce = window.innerWidth < 600 ? 500 : 800; // Adjust push force for mobile
+                const pushForce = window.innerWidth < 600 ? 500 : 800; 
                 img.style.setProperty('--explode-x', `${(dirX/dist) * pushForce}px`);
                 img.style.setProperty('--explode-y', `${(dirY/dist) * pushForce}px`);
                 
@@ -511,14 +488,12 @@
                     document.getElementById("eye-toggle").style.display = "block";
                     document.body.style.overflow = "auto";
                     
-                    // Reduced delay for mobile so it types faster after envelope opens
                     setTimeout(startTypewriter, 500); 
-                }, 6000); // Wait 6 seconds (not 10) to show text so mobile users don't get bored
+                }, 6000); 
 
             }, 500);
         }
 
-        // --- UPDATED TYPEWRITER ENGINE FOR MOBILE ---
         const letterParagraphs = [
             "behi kbal me netaadew l surprise okhra nheb nkollek un petit message :",
             "over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.",
@@ -533,7 +508,7 @@
 
         function startTypewriter() {
             const container = document.getElementById('typed-letter-container');
-            container.innerHTML = ''; // Ensure it's empty
+            container.innerHTML = ''; 
             
             function typeNext() {
                 if (pIndex < letterParagraphs.length) {
@@ -543,20 +518,18 @@
                     }
                     
                     if (charIndex < letterParagraphs[pIndex].length) {
-                        // Use textContent instead of innerHTML for better mobile performance
                         currentP.textContent += letterParagraphs[pIndex].charAt(charIndex);
                         charIndex++;
                         
-                        // Auto-scroll down on mobile if text gets long
                         const overlay = document.getElementById("content-overlay");
                         overlay.scrollTop = overlay.scrollHeight;
 
-                        setTimeout(typeNext, 30); // Typing speed
+                        setTimeout(typeNext, 30); 
                     } else {
                         pIndex++;
                         charIndex = 0;
                         currentP = null;
-                        setTimeout(typeNext, 500); // Pause between paragraphs
+                        setTimeout(typeNext, 500); 
                     }
                 } else {
                     container.classList.remove('cursor');
