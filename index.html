@@ -12,7 +12,6 @@
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; padding: 0; color: white; overflow: hidden; text-align: center;
-            /* Applying background photo from the start with slow fade */
             background-image: url('bg.jpg');
             background-size: cover;
             background-position: center;
@@ -27,6 +26,8 @@
             background: rgba(255, 182, 193, 0.65); 
             backdrop-filter: blur(8px); 
             z-index: -1;
+            opacity: 0; 
+            transition: opacity 1.5s ease;
         }
 
         .timeline-content::first-letter, .secret-love-letter p::first-letter { text-transform: uppercase; }
@@ -40,9 +41,7 @@
         #eye-toggle { position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 20px; color: white; cursor: pointer; display: none; backdrop-filter: blur(5px); border: 1px solid rgba(255,179,198,0.3); transition: background 0.3s; }
         #eye-toggle:active { background: rgba(255, 77, 109, 0.5); }
 
-        /* =========================================
-           COUNTDOWN SCREEN - NOW BEAUTIFUL PINK
-           ========================================= */
+        /* Countdown Screen - Pink Gradient */
         #countdown-screen { 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             height: 100vh; width: 100vw; position: absolute; z-index: 1000; 
@@ -67,6 +66,7 @@
             border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.4); 
             box-shadow: 0 20px 50px rgba(214, 51, 108, 0.3), inset 0 0 20px rgba(255,255,255,0.2); 
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); /* Safari support */
         }
 
         #timer { display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap; }
@@ -101,15 +101,12 @@
         .time-unit .label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 2px; color: #fff0f3; margin-top: 12px; font-weight: 700; text-shadow: 0 1px 3px rgba(214, 51, 108, 0.8); }
         
         .colon { font-size: 2.5em; font-weight: 900; color: #fff; animation: pulseColon 1.5s infinite ease-in-out; padding-bottom: 30px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
-        @keyframes pulseColon { 
-            0%, 100% { opacity: 1; transform: scale(1); } 
-            50% { opacity: 0.5; transform: scale(0.9); } 
-        }
+        @keyframes pulseColon { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.9); } }
 
         /* Heart Question View */
         #question-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.2); z-index: 60; justify-content: center; align-items: center; overflow: hidden; }
         #question-content { z-index: 100; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
-        #question-view h2 { font-size: 2.5em; text-shadow: 0 0 20px #ff4d6d, 0 0 10px #000; margin-bottom: 10px; color: #fff; text-align: center; }
+        #question-view h2 { font-size: 2.5em; text-shadow: 0 0 20px #ff4d6d, 0 0 10px #000; margin-bottom: 10px; color: #fff; text-align: center; padding: 0 20px;}
         #question-view p { font-size: 1.2em; color: #ffccd5; font-style: italic; margin-top: 0; text-shadow: 0 0 5px #000;}
         #yes-btn-scatter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
@@ -128,10 +125,7 @@
 
         /* Explosion Shatter */
         .explode-btn { animation: explodeOut 0.8s forwards cubic-bezier(0.2, 0.8, 0.2, 1) !important; }
-        @keyframes explodeOut { 
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
-            100% { transform: translate(var(--explode-x), var(--explode-y)) scale(0); opacity: 0; } 
-        }
+        @keyframes explodeOut { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(var(--explode-x), var(--explode-y)) scale(0); opacity: 0; } }
 
         /* Envelope */
         #envelope-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; justify-content: center; align-items: center; z-index: 30; }
@@ -155,18 +149,27 @@
         .stacked-photo { position: absolute; width: 150px; height: 180px; object-fit: cover; border: 4px solid #fff0f3; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); opacity: 0; animation: popInStack 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; cursor: pointer; }
         @keyframes popInStack { 0% { opacity: 0; transform: scale(0) rotate(0deg); } 100% { opacity: 1; transform: var(--target-transform); } }
 
-        /* Content Overlay */
-        #content-overlay { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 50; overflow-y: auto; padding: 40px 0; opacity: 0; transition: opacity 0.5s ease; animation: fadeInOverlay 2s ease forwards; }
+        /* Content Overlay - Added smooth touch scrolling for mobile */
+        #content-overlay { 
+            display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(0,0,0,0.5); z-index: 50; overflow-y: auto; padding: 40px 0; 
+            opacity: 0; transition: opacity 0.5s ease; animation: fadeInOverlay 2s ease forwards; 
+            -webkit-overflow-scrolling: touch; /* Crucial for smooth scroll on iPhones */
+        }
         @keyframes fadeInOverlay { to { opacity: 1; } }
 
-        .glass-container { max-width: 600px; margin: auto; text-align: left; padding: 30px 20px; background: rgba(255, 240, 243, 0.95); border-radius: 20px; box-shadow: 0 0 40px rgba(201, 24, 74, 0.6); border: 1px solid rgba(255, 179, 198, 0.5); display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease; }
+        .glass-container { 
+            max-width: 600px; width: 85%; margin: auto; text-align: left; padding: 30px 20px; 
+            background: rgba(255, 240, 243, 0.95); border-radius: 20px; 
+            box-shadow: 0 0 40px rgba(201, 24, 74, 0.6); border: 1px solid rgba(255, 179, 198, 0.5); 
+            display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease; 
+        }
         
         .secret-love-letter { font-size: 1.15em; line-height: 1.6; color: #590d22; margin-bottom: 20px; font-style: italic; text-align: center; padding: 0 10px; font-weight: 500; width: 100%; min-height: 200px; }
         .secret-love-letter p { margin-bottom: 15px; }
         .cursor::after { content: '|'; animation: blink 1s step-end infinite; color: #c9184a; font-weight: bold; }
         @keyframes blink { 50% { opacity: 0; } }
         
-        /* Updated Signature */
         .signature { text-align: right; font-weight: bold; color: #c9184a; margin-top: 25px; font-size: 1.05em; font-family: 'Georgia', serif; width: 100%; padding-right: 15px; display: none; opacity: 0; }
 
         .btn-yes { background-color: #d6336c; color: white; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); font-size: 1.2em; font-weight: bold; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, background-color 0.3s ease; display: none; opacity: 0; margin-top: 15px;}
@@ -186,17 +189,11 @@
         .black-point .timeline-date { color: #555; }
         .black-point .timeline-content { background: #1a1a1a; color: #eee; box-shadow: inset 0 0 20px rgba(0,0,0,0.9); border: 1px solid #333; }
         
-        /* Updated Signs of Love CSS - High Z-Index to float over countdown */
+        /* Signs of Love */
         .signs-of-love {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1001; /* Above the pink countdown screen */
-            font-size: 24px;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 0 15px rgba(255, 77, 109, 0.9);
-            animation: signsOfLoveFloat 7s linear forwards;
-            opacity: 0;
-            transform: scale(0);
+            position: fixed; pointer-events: none; z-index: 1001; font-size: 24px;
+            color: rgba(255, 255, 255, 0.9); text-shadow: 0 0 15px rgba(255, 77, 109, 0.9);
+            animation: signsOfLoveFloat 7s linear forwards; opacity: 0; transform: scale(0);
         }
         @keyframes signsOfLoveFloat {
             0% { top: 100vh; opacity: 0; transform: scale(0) rotate(0deg); }
@@ -204,11 +201,42 @@
             80% { opacity: 1; transform: scale(1.2) rotate(0deg); }
             100% { top: -10vh; opacity: 0; transform: scale(1) rotate(0deg); }
         }
+
+        /* =======================================================
+           MOBILE RESPONSIVENESS - FIXES SCALING FOR ALL PHONES
+           ======================================================= */
+        @media (max-width: 600px) {
+            #countdown-screen h1 { font-size: 2.8em; }
+            #countdown-screen p { font-size: 1.1em; padding: 0 15px; }
+            
+            /* Shrink timer boxes to fit screen */
+            #timer-container { padding: 20px 10px; width: 90%; }
+            #timer { gap: 5px; }
+            .time-unit { width: 55px; }
+            .time-unit .num { font-size: 1.8em; min-width: 45px; padding: 10px 5px; }
+            .time-unit .label { font-size: 0.6em; letter-spacing: 1px; }
+            .colon { font-size: 1.8em; padding-bottom: 20px; }
+            
+            /* Shrink Heart Photos */
+            .heart-photo { width: 50px; height: 50px; border-width: 2px; }
+            #question-view h2 { font-size: 1.8em; }
+            
+            /* Scale Envelope */
+            #envelope-wrapper { transform: translateY(-50px) scale(0.8); }
+            @keyframes dropIn { to { transform: translateY(0) scale(0.8); opacity: 1; } }
+            #envelope-wrapper.open .env-letter { transform: translateY(-20vh) scale(1.4); }
+            
+            /* Scale Stacking Photos */
+            .stacked-photo { width: 110px; height: 135px; }
+            
+            .secret-love-letter { font-size: 1em; }
+            .timeline-header { font-size: 1.8em; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="permanent-overlay" style="opacity: 0; transition: opacity 1.5s ease;"></div>
+    <div id="permanent-overlay"></div>
 
     <audio id="bg-music" loop>
         <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
@@ -305,16 +333,7 @@
         const soloPhotos = ["solo2.png", "solo3.png", "solo4.jpg", "solo5.jpg"];
         const duoPhotos = ["duo1.jpg", "duo2.jpg", "duo3.jpg", "duo4.jpg", "duo5.jpg"];
 
-        // Text paragraphs for the Typewriter Effect
-        const letterParagraphs = [
-            "behi kbal me netaadew l surprise okhra nheb nkollek un petit message :",
-            "over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.",
-            "Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.",
-            "Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.",
-            "naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU ."
-        ];
-
-        // --- UPGRADED: Little signs of love float over everything ---
+        // Little signs of love
         function spawnLittleHearts() {
             const heartIcons = ['💖', '❤️', '💕', '💗', '💓', '💞', '😍', '✨'];
             setInterval(() => {
@@ -330,7 +349,7 @@
                 }, 50);
 
                 setTimeout(() => heart.remove(), 7000);
-            }, 500); // Spawning faster
+            }, 500); 
         }
         spawnLittleHearts();
 
@@ -387,15 +406,18 @@
             if (window.unlocked) return; window.unlocked = true;
 
             // Fade in background photo and blur overlay
-            document.body.style.backgroundImage = "url('bg.jpg')";
+            document.body.style.backgroundImage = `url('${backgroundPhotoUrl}')`;
             document.getElementById("permanent-overlay").style.opacity = "1";
 
             document.getElementById("countdown-screen").style.display = "none";
             document.getElementById("question-view").style.display = "flex";
 
             const scatterContainer = document.getElementById("yes-btn-scatter");
-            const numPoints = 22; 
-            const scale = 11; 
+            
+            // MOBILE DYNAMIC MATH: Shrinks the heart shape if on a narrow screen!
+            const isMobile = window.innerWidth < 600;
+            const numPoints = isMobile ? 16 : 22; // Less points on mobile so they don't overlap
+            const scale = isMobile ? 6 : 11; // Smaller heart radius on mobile
             
             for(let i=0; i<numPoints; i++) {
                 let t = (i / numPoints) * Math.PI * 2;
@@ -431,7 +453,7 @@
                 const dirY = imgY - centerY;
                 const dist = Math.sqrt(dirX*dirX + dirY*dirY) || 1;
                 
-                const pushForce = 800; 
+                const pushForce = window.innerWidth < 600 ? 500 : 800; // Adjust push force for mobile
                 img.style.setProperty('--explode-x', `${(dirX/dist) * pushForce}px`);
                 img.style.setProperty('--explode-y', `${(dirY/dist) * pushForce}px`);
                 
@@ -457,7 +479,7 @@
         window.openEnvelope = function() {
             const audio = document.getElementById("bg-music");
             audio.volume = 0.5; 
-            audio.play().catch(e => console.log("Audio autoplay was blocked by browser"));
+            audio.play().catch(e => console.log("Audio autoplay blocked by mobile browser - this is normal"));
 
             document.getElementById("question-view").style.display = "none";
             document.getElementById("envelope-view").style.display = "flex";
@@ -489,19 +511,29 @@
                     document.getElementById("eye-toggle").style.display = "block";
                     document.body.style.overflow = "auto";
                     
-                    startTypewriter();
-                }, 10000);
+                    // Reduced delay for mobile so it types faster after envelope opens
+                    setTimeout(startTypewriter, 500); 
+                }, 6000); // Wait 6 seconds (not 10) to show text so mobile users don't get bored
 
             }, 500);
         }
 
-        // --- TYPEWRITER ENGINE ---
+        // --- UPDATED TYPEWRITER ENGINE FOR MOBILE ---
+        const letterParagraphs = [
+            "behi kbal me netaadew l surprise okhra nheb nkollek un petit message :",
+            "over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.",
+            "Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.",
+            "Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.",
+            "naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU ."
+        ];
+
         let pIndex = 0;
         let charIndex = 0;
         let currentP = null;
 
         function startTypewriter() {
             const container = document.getElementById('typed-letter-container');
+            container.innerHTML = ''; // Ensure it's empty
             
             function typeNext() {
                 if (pIndex < letterParagraphs.length) {
@@ -511,14 +543,20 @@
                     }
                     
                     if (charIndex < letterParagraphs[pIndex].length) {
-                        currentP.innerHTML += letterParagraphs[pIndex].charAt(charIndex);
+                        // Use textContent instead of innerHTML for better mobile performance
+                        currentP.textContent += letterParagraphs[pIndex].charAt(charIndex);
                         charIndex++;
-                        setTimeout(typeNext, 40); 
+                        
+                        // Auto-scroll down on mobile if text gets long
+                        const overlay = document.getElementById("content-overlay");
+                        overlay.scrollTop = overlay.scrollHeight;
+
+                        setTimeout(typeNext, 30); // Typing speed
                     } else {
                         pIndex++;
                         charIndex = 0;
                         currentP = null;
-                        setTimeout(typeNext, 600); 
+                        setTimeout(typeNext, 500); // Pause between paragraphs
                     }
                 } else {
                     container.classList.remove('cursor');
