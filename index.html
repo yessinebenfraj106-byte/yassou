@@ -17,7 +17,6 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            /* Making the background softer and pinker from the start */
             background-color: #fff0f3;
             transition: background-image 1.5s ease-in-out;
         }
@@ -25,8 +24,8 @@
         /* Continuous Pink Frosted Blur over everything */
         #permanent-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(255, 182, 193, 0.65); /* More pink, more opaque for a stronger effect */
-            backdrop-filter: blur(8px); /* Same blur always */
+            background: rgba(255, 182, 193, 0.65); 
+            backdrop-filter: blur(8px); 
             z-index: -1;
         }
 
@@ -41,17 +40,71 @@
         #eye-toggle { position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 20px; color: white; cursor: pointer; display: none; backdrop-filter: blur(5px); border: 1px solid rgba(255,179,198,0.3); transition: background 0.3s; }
         #eye-toggle:active { background: rgba(255, 77, 109, 0.5); }
 
-        /* Countdown Screen - Updated for pinker theme */
-        #countdown-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: absolute; z-index: 1000; background: rgba(13, 2, 5, 0.3); }
-        #countdown-screen h1 { font-size: 3.5em; margin-bottom: 10px; user-select: none; cursor: pointer; color: #fff0f3; text-shadow: 0 0 20px #ff4d6d; transition: opacity 0.1s; }
-        #countdown-screen p { font-size: 1.2em; font-weight: 500; color: #ffccd5; margin-bottom: 30px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        /* =========================================
+           COUNTDOWN SCREEN - NOW BEAUTIFUL PINK
+           ========================================= */
+        #countdown-screen { 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            height: 100vh; width: 100vw; position: absolute; z-index: 1000; 
+            background: radial-gradient(circle at center, #ffb3c6 0%, #ff758c 100%); 
+        }
+        
+        #countdown-screen h1 { 
+            font-size: 4em; margin-bottom: 5px; user-select: none; cursor: pointer; color: #ffffff; 
+            text-shadow: 0 0 20px #ff0055, 0 0 10px rgba(255, 255, 255, 0.5); 
+            transition: transform 0.1s, text-shadow 0.1s; letter-spacing: 1px;
+        }
+        #countdown-screen h1:active { transform: scale(0.95); text-shadow: 0 0 10px rgba(255, 77, 109, 0.5); }
+        
+        #countdown-screen p { 
+            font-size: 1.2em; font-weight: 500; color: #ffe1e8; margin-bottom: 40px; 
+            text-shadow: 0 2px 4px rgba(214, 51, 108, 0.5); letter-spacing: 0.5px; opacity: 0.9;
+        }
 
-        #timer { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px; }
-        .time-unit { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 179, 198, 0.3); border-radius: 15px; padding: 15px; min-width: 65px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; }
-        .time-unit .num { font-size: 2.2em; font-weight: 800; color: #fff; text-shadow: 0 0 15px #ff4d6d; line-height: 1; }
-        .time-unit .label { font-size: 0.65em; text-transform: uppercase; letter-spacing: 1px; color: #fff0f3; margin-top: 8px; font-weight: bold; }
-        .colon { font-size: 2em; font-weight: bold; color: #ff4d6d; animation: pulseColon 1s infinite alternate; padding-bottom: 15px; }
-        @keyframes pulseColon { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+        /* Frosted Glass Container for Timer */
+        #timer-container {
+            padding: 30px 40px; background: rgba(255, 255, 255, 0.15); 
+            border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.4); 
+            box-shadow: 0 20px 50px rgba(214, 51, 108, 0.3), inset 0 0 20px rgba(255,255,255,0.2); 
+            backdrop-filter: blur(15px);
+        }
+
+        #timer { display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        
+        .time-unit { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        
+        /* Realistic Split-Flap Cards */
+        .time-unit .num { 
+            font-size: 2.8em; font-weight: 800; color: #fff; 
+            background: linear-gradient(180deg, rgba(214, 51, 108, 0.95) 0%, rgba(161, 15, 60, 0.95) 100%);
+            padding: 15px 10px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 179, 198, 0.6);
+            min-width: 75px; position: relative; perspective: 500px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        .time-unit .num::after {
+            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 0, 0, 0.4); box-shadow: 0 1px 0px rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%); z-index: 10; pointer-events: none;
+        }
+
+        .flip { animation: flipCard 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); }
+        @keyframes flipCard {
+            0% { transform: rotateX(0deg) scale(1); filter: brightness(1); }
+            50% { transform: rotateX(-90deg) scale(1.05); filter: brightness(0.7); box-shadow: 0 20px 30px rgba(0,0,0,0.6); }
+            100% { transform: rotateX(0deg) scale(1); filter: brightness(1); }
+        }
+        
+        .time-unit .label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 2px; color: #fff0f3; margin-top: 12px; font-weight: 700; text-shadow: 0 1px 3px rgba(214, 51, 108, 0.8); }
+        
+        .colon { font-size: 2.5em; font-weight: 900; color: #fff; animation: pulseColon 1.5s infinite ease-in-out; padding-bottom: 30px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+        @keyframes pulseColon { 
+            0%, 100% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.5; transform: scale(0.9); } 
+        }
 
         /* Heart Question View */
         #question-view { display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.2); z-index: 60; justify-content: center; align-items: center; overflow: hidden; }
@@ -97,9 +150,6 @@
         .env-piece { transition: opacity 1s 1.5s, transform 1s 1.5s; }
         #envelope-wrapper.open .env-piece { opacity: 0; transform: translateY(50px); }
 
-        .shining-heart { position: absolute; color: #ff4d6d; z-index: 1; opacity: 0; animation: shine 4s ease-in-out forwards; pointer-events: none; }
-        @keyframes shine { 0% { opacity: 0; transform: translateY(0) scale(0.5); text-shadow: 0 0 5px #ff4d6d; } 50% { opacity: 1; transform: translateY(-20px) scale(1.5); text-shadow: 0 0 20px #ff4d6d, 0 0 40px #ffb3c6; } 100% { opacity: 0; transform: translateY(-40px) scale(1); text-shadow: 0 0 5px #ff4d6d; } }
-
         /* Stacking Photos */
         #photo-stack-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; pointer-events: none; }
         .stacked-photo { position: absolute; width: 150px; height: 180px; object-fit: cover; border: 4px solid #fff0f3; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); opacity: 0; animation: popInStack 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; cursor: pointer; }
@@ -110,13 +160,16 @@
         @keyframes fadeInOverlay { to { opacity: 1; } }
 
         .glass-container { max-width: 600px; margin: auto; text-align: left; padding: 30px 20px; background: rgba(255, 240, 243, 0.95); border-radius: 20px; box-shadow: 0 0 40px rgba(201, 24, 74, 0.6); border: 1px solid rgba(255, 179, 198, 0.5); display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s ease; }
-        .secret-love-letter { font-size: 1.15em; line-height: 1.6; color: #590d22; margin-bottom: 20px; font-style: italic; text-align: center; padding: 0 10px; font-weight: 500; width: 100%; }
-        .secret-love-letter p { margin-bottom: 15px; }
         
-        /* New Signature Styling */
-        .signature { text-align: right; font-weight: bold; color: #c9184a; margin-top: 25px; font-size: 0.95em; font-family: 'Georgia', serif; width: 100%; padding-right: 15px; }
+        .secret-love-letter { font-size: 1.15em; line-height: 1.6; color: #590d22; margin-bottom: 20px; font-style: italic; text-align: center; padding: 0 10px; font-weight: 500; width: 100%; min-height: 200px; }
+        .secret-love-letter p { margin-bottom: 15px; }
+        .cursor::after { content: '|'; animation: blink 1s step-end infinite; color: #c9184a; font-weight: bold; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Updated Signature */
+        .signature { text-align: right; font-weight: bold; color: #c9184a; margin-top: 25px; font-size: 1.05em; font-family: 'Georgia', serif; width: 100%; padding-right: 15px; display: none; opacity: 0; }
 
-        .btn-yes { background-color: #d6336c; color: white; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); font-size: 1.2em; font-weight: bold; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, background-color 0.3s ease;}
+        .btn-yes { background-color: #d6336c; color: white; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.6); font-size: 1.2em; font-weight: bold; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.1s ease, background-color 0.3s ease; display: none; opacity: 0; margin-top: 15px;}
         .btn-yes:hover { background-color: #c9184a; transform: scale(0.95); }
 
         .timeline-header { color: #c9184a; text-align: center; font-size: 2.2em; margin-bottom: 10px; width: 100%; }
@@ -133,29 +186,29 @@
         .black-point .timeline-date { color: #555; }
         .black-point .timeline-content { background: #1a1a1a; color: #eee; box-shadow: inset 0 0 20px rgba(0,0,0,0.9); border: 1px solid #333; }
         
-        /* Little Signs of Love CSS */
+        /* Updated Signs of Love CSS - High Z-Index to float over countdown */
         .signs-of-love {
             position: fixed;
             pointer-events: none;
-            z-index: 1; /* Above blur but below UI */
-            font-size: 15px;
-            color: rgba(255, 77, 109, 0.7);
-            text-shadow: 0 0 10px rgba(255, 77, 109, 0.8);
-            animation: signsOfLoveFloat 8s linear forwards;
+            z-index: 1001; /* Above the pink countdown screen */
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 15px rgba(255, 77, 109, 0.9);
+            animation: signsOfLoveFloat 7s linear forwards;
             opacity: 0;
             transform: scale(0);
         }
         @keyframes signsOfLoveFloat {
             0% { top: 100vh; opacity: 0; transform: scale(0) rotate(0deg); }
             10% { opacity: 1; transform: scale(1) rotate(0deg); }
-            80% { opacity: 1; transform: scale(1.1) rotate(0deg); }
+            80% { opacity: 1; transform: scale(1.2) rotate(0deg); }
             100% { top: -10vh; opacity: 0; transform: scale(1) rotate(0deg); }
         }
     </style>
 </head>
 <body>
 
-    <div id="permanent-overlay"></div>
+    <div id="permanent-overlay" style="opacity: 0; transition: opacity 1.5s ease;"></div>
 
     <audio id="bg-music" loop>
         <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
@@ -170,7 +223,20 @@
     <div id="countdown-screen">
         <h1 id="peeking-text" onclick="secretUnlock()">No Peeking! 🙈</h1>
         <p>surprise l yassoutiiii mais mch tawa 😉</p>
-        <div id="timer">Calculating exact time...</div>
+        
+        <div id="timer-container">
+            <div id="timer">
+                <div class="time-unit"><div class="num" id="val-months">0</div><div class="label">Months</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-days">0</div><div class="label">Days</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-hours">0</div><div class="label">Hours</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-mins">0</div><div class="label">Mins</div></div>
+                <div class="colon">:</div>
+                <div class="time-unit"><div class="num" id="val-secs">0</div><div class="label">Secs</div></div>
+            </div>
+        </div>
     </div>
 
     <div id="question-view">
@@ -196,14 +262,9 @@
 
     <div id="content-overlay">
         <div id="secret-letter-view" class="glass-container">
-            <div class="secret-love-letter">
-                <p>behi kbal me netaadew l surprise okhra nheb nkollek un petit message :</p>
-                <p>over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.</p>
-                <p>Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.</p>
-                <p>Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.</p>
-                <p>naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU .</p>
-                <p class="signature"> Yessine on April 10, 2026 ✍️</p>
-            </div>
+            <div id="typed-letter-container" class="secret-love-letter cursor"></div>
+            
+            <p class="signature" id="letter-sig">Yessine, 10/04/2026 ✍️</p>
             <button id="btn-next" class="btn-yes" onclick="showTimeline()">Next ❤️❤️❤️</button>
         </div>
 
@@ -238,13 +299,22 @@
         const targetMonth = 7; 
         const targetDay = 24;
 
-        // LOCAL FILE NAMES - FIXED EXTENSIONS TO MATCH screenshot
+        // LOCAL FILE NAMES - FIXED EXTENSIONS
         const backgroundPhotoUrl = "bg.jpg"; 
         const heartPhotos = ["soloo.png", "soloo1.jpg"];
         const soloPhotos = ["solo2.png", "solo3.png", "solo4.jpg", "solo5.jpg"];
         const duoPhotos = ["duo1.jpg", "duo2.jpg", "duo3.jpg", "duo4.jpg", "duo5.jpg"];
 
-        // Little signs of love function
+        // Text paragraphs for the Typewriter Effect
+        const letterParagraphs = [
+            "behi kbal me netaadew l surprise okhra nheb nkollek un petit message :",
+            "over the last year, you have quietly become my favorite part of every day without me even realizing. belhak it s a rare feeling i never felt with anyone before no matter chkoun howa/heya . You have this rare way of making everything feel a little lighter, a little brighter, just by being exactly who you are.",
+            "Netfaker awel mara ritk feha, I never thought you'd mean this much to me. You are literally the plot twist I didn't know my life needed.",
+            "Every day without talking to you feels like something is missing. Merci li enti fi hyati, w merci for being the amazing person you are.",
+            "naarch saat nkollek w saat le amma belhak i ve never wanted to waste the chance bch nahki maak wala nkablek wala ay haja . You really mean to me more than what could words describe . YOU ARE REALLY SOOOOO SPECIALL YASSSSOUUU ."
+        ];
+
+        // --- UPGRADED: Little signs of love float over everything ---
         function spawnLittleHearts() {
             const heartIcons = ['💖', '❤️', '💕', '💗', '💓', '💞', '😍', '✨'];
             setInterval(() => {
@@ -252,18 +322,15 @@
                 heart.innerHTML = heartIcons[Math.floor(Math.random() * heartIcons.length)];
                 heart.className = "signs-of-love";
                 heart.style.left = Math.random() * 100 + "vw";
-                heart.style.top = (Math.random() * 10 + 95) + "vh"; // Spawn slightly below bottom
-                heart.style.opacity = Math.random() * 0.4 + 0.3; // Random lower opacity for subtlety
-                heart.style.transition = "transform 8s linear"; // Smooth rotational transition
+                heart.style.top = (Math.random() * 10 + 95) + "vh"; 
                 document.body.appendChild(heart);
 
-                // Add random rotation and subtle side-to-side shift after spawning
                 setTimeout(() => {
-                    heart.style.transform = `translateX(${Math.random() * 60 - 30}px) rotate(${Math.random() * 180 - 90}deg)`;
+                    heart.style.transform = `translateX(${Math.random() * 80 - 40}px) rotate(${Math.random() * 180 - 90}deg)`;
                 }, 50);
 
-                setTimeout(() => heart.remove(), 8000);
-            }, 800);
+                setTimeout(() => heart.remove(), 7000);
+            }, 500); // Spawning faster
         }
         spawnLittleHearts();
 
@@ -276,6 +343,8 @@
             if (taps >= 10) { triggerPhaseOne(); }
         }
 
+        let prevTimes = { months: -1, days: -1, hours: -1, mins: -1, secs: -1 };
+        
         function updateTimer() {
             const now = new Date();
             let targetDate = new Date(now.getFullYear(), targetMonth, targetDay, 0, 0, 0);
@@ -289,19 +358,37 @@
             }
 
             const dist = targetDate.getTime() - tempDate.getTime();
-            document.getElementById("timer").innerHTML = `
-                <div class="time-unit"><div class="num">${months}</div><div class="label">Months</div></div><div class="colon">:</div>
-                <div class="time-unit"><div class="num">${Math.floor(dist / (1000 * 60 * 60 * 24))}</div><div class="label">Days</div></div><div class="colon">:</div>
-                <div class="time-unit"><div class="num">${Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}</div><div class="label">Hours</div></div><div class="colon">:</div>
-                <div class="time-unit"><div class="num">${Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60))}</div><div class="label">Mins</div></div><div class="colon">:</div>
-                <div class="time-unit"><div class="num">${Math.floor((dist % (1000 * 60)) / 1000)}</div><div class="label">Secs</div></div>
-            `;
+            
+            const currentTimes = {
+                months: months,
+                days: Math.floor(dist / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                mins: Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)),
+                secs: Math.floor((dist % (1000 * 60)) / 1000)
+            };
+
+            for (let key in currentTimes) {
+                if (currentTimes[key] !== prevTimes[key]) {
+                    let el = document.getElementById(`val-${key}`);
+                    if(el) {
+                        el.innerText = currentTimes[key];
+                        el.classList.remove('flip');
+                        void el.offsetWidth; 
+                        el.classList.add('flip');
+                    }
+                    prevTimes[key] = currentTimes[key];
+                }
+            }
         }
         setInterval(updateTimer, 1000);
         updateTimer();
 
         function triggerPhaseOne() {
             if (window.unlocked) return; window.unlocked = true;
+
+            // Fade in background photo and blur overlay
+            document.body.style.backgroundImage = "url('bg.jpg')";
+            document.getElementById("permanent-overlay").style.opacity = "1";
 
             document.getElementById("countdown-screen").style.display = "none";
             document.getElementById("question-view").style.display = "flex";
@@ -401,9 +488,56 @@
                     document.getElementById("content-overlay").style.display = "block";
                     document.getElementById("eye-toggle").style.display = "block";
                     document.body.style.overflow = "auto";
+                    
+                    startTypewriter();
                 }, 10000);
 
             }, 500);
+        }
+
+        // --- TYPEWRITER ENGINE ---
+        let pIndex = 0;
+        let charIndex = 0;
+        let currentP = null;
+
+        function startTypewriter() {
+            const container = document.getElementById('typed-letter-container');
+            
+            function typeNext() {
+                if (pIndex < letterParagraphs.length) {
+                    if (!currentP) {
+                        currentP = document.createElement('p');
+                        container.appendChild(currentP);
+                    }
+                    
+                    if (charIndex < letterParagraphs[pIndex].length) {
+                        currentP.innerHTML += letterParagraphs[pIndex].charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeNext, 40); 
+                    } else {
+                        pIndex++;
+                        charIndex = 0;
+                        currentP = null;
+                        setTimeout(typeNext, 600); 
+                    }
+                } else {
+                    container.classList.remove('cursor');
+                    
+                    const sig = document.getElementById('letter-sig');
+                    const btn = document.getElementById('btn-next');
+                    
+                    sig.style.display = 'block';
+                    btn.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        sig.style.opacity = '1';
+                        sig.style.animation = 'fadeInOverlay 1.5s ease forwards';
+                        btn.style.opacity = '1';
+                        btn.style.animation = 'fadeInOverlay 1.5s ease forwards';
+                    }, 100);
+                }
+            }
+            typeNext();
         }
 
         function startPhotoStacking() {
@@ -411,13 +545,13 @@
             const cols = 3; const rows = 5;
             const colWidth = 100 / cols; const rowHeight = 100 / rows;
             let currentCell = 0; let currentLayer = 1;
+            let totalPhotosSpawned = 0; 
 
             const photoInterval = setInterval(() => {
                 if (currentLayer > 2) { clearInterval(photoInterval); return; }
                 const col = currentCell % cols; const row = Math.floor(currentCell / cols);
                 const img = document.createElement("img");
                 
-                // alternating logic for flood
                 const photoSrc = (totalPhotosSpawned % 2 === 0) 
                     ? soloPhotos[Math.floor(Math.random() * soloPhotos.length)]
                     : duoPhotos[Math.floor(Math.random() * duoPhotos.length)];
@@ -448,23 +582,19 @@
             }, 180); 
         }
 
-        // --- FIXED HIDE/SHOW TEXT BUTTON LOGIC ---
         window.toggleOverlay = function() {
             const containers = document.querySelectorAll(".glass-container");
             const eye = document.getElementById("eye-toggle");
             
-            // Checking first container to find state
             let isHidden = containers[0].style.opacity === "0";
 
             if (isHidden) {
-                // Showing all containers
                 containers.forEach(c => {
                     c.style.opacity = "1";
                     c.style.pointerEvents = "auto";
                 });
                 eye.innerText = "👁️ Hide Text";
             } else {
-                // Hiding all containers
                 containers.forEach(c => {
                     c.style.opacity = "0";
                     c.style.pointerEvents = "none";
